@@ -133,6 +133,11 @@
 ///////////////////////////////////arriba ya no funciona////////////////////////
 
 import fetch from "node-fetch";
+import https from "https";
+
+const agent = new https.Agent({
+  rejectUnauthorized: false, // Ignorar validación del certificado
+});
 
 export default async function handler(req, res) {
   const targetUrl = req.query.url;
@@ -145,13 +150,13 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(targetUrl, {
+      agent, // Usar el agente HTTPS con validación desactivada
       headers: {
         "Accept-Encoding": "gzip, deflate, br",
         "User-Agent": "Mozilla/5.0 (compatible; ProxyBot/1.0)",
       },
     });
 
-    // Check for non-OK responses
     if (!response.ok) {
       console.error(
         "Error al obtener la URL:",
@@ -164,12 +169,6 @@ export default async function handler(req, res) {
     const contentType = response.headers.get("content-type");
     const body = await response.text();
 
-    // Modify response headers to remove restrictive policies
-    const headers = new Map(response.headers.entries());
-    headers.delete("X-Frame-Options");
-    headers.delete("Content-Security-Policy");
-
-    // Inject the script for removing popups
     const modifiedBody = body.replace(
       "</head>",
       `
