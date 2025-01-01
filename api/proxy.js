@@ -175,14 +175,18 @@ export default async function handler(req, res) {
       <script>
         (function () {
           const fixScrollAndRemovePopups = () => {
+            // Seleccionar los elementos del muro, banners y popups
             const popups = document.querySelectorAll(
               '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content, #pmConsentWall, .pmConsentWall-col, .pmConsentWall-main, .pmConsentWall-main-inner'
             );
+    
+            // Aplicar display: none a los elementos encontrados
             popups.forEach((popup) => {
-              console.log('Eliminando popup o muro de consentimiento:', popup);
-              popup.parentNode?.removeChild(popup);
+              console.log('Ocultando popup o muro de consentimiento:', popup);
+              popup.style.display = 'none';
             });
     
+            // Restaurar el scroll y los estilos bloqueados
             const elements = [document.body, document.documentElement];
             elements.forEach((el) => {
               el.style.overflow = 'auto';
@@ -191,6 +195,7 @@ export default async function handler(req, res) {
               el.style.height = 'auto';
             });
     
+            // Detectar otros contenedores que bloquean
             const blockers = document.querySelectorAll(
               '[style*="overflow: hidden"], [style*="position: fixed"], [style*="pointer-events: none"], [class*="pmConsentWall"]'
             );
@@ -199,13 +204,15 @@ export default async function handler(req, res) {
               blocker.style.overflow = 'auto';
               blocker.style.position = 'static';
               blocker.style.pointerEvents = 'auto';
-              blocker.style.height = 'auto';
             });
     
             console.log('Scroll desbloqueado y página lista para navegar.');
           };
     
+          // Ejecutar el script al cargar el DOM
           document.addEventListener('DOMContentLoaded', fixScrollAndRemovePopups);
+    
+          // Observar cambios en el DOM para detectar popups dinámicos
           const observer = new MutationObserver(() => fixScrollAndRemovePopups());
           observer.observe(document.body, { childList: true, subtree: true });
         })();
