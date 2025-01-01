@@ -180,10 +180,10 @@ export default async function handler(req, res) {
               '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content, #pmConsentWall, .pmConsentWall-col, .pmConsentWall-main, .pmConsentWall-main-inner'
             );
     
-            // Aplicar display: none a los elementos encontrados
+            // Aplicar display: contents a los elementos encontrados
             popups.forEach((popup) => {
-              console.log('Ocultando popup o muro de consentimiento:', popup);
-              popup.style.display = 'none';
+              console.log('Aplicando display: contents al popup o muro de consentimiento:', popup);
+              popup.style.display = 'contents';
             });
     
             // Restaurar el scroll y los estilos bloqueados
