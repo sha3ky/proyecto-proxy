@@ -144,34 +144,42 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch(targetUrl);
+    const response = await fetch(targetUrl, {
+      headers: {
+        "Accept-Encoding": "gzip, deflate, br",
+        "User-Agent": "Mozilla/5.0 (compatible; ProxyBot/1.0)",
+      },
+    });
 
-    // Modificar encabezados para eliminar restricciones
+    // Check for non-OK responses
+    if (!response.ok) {
+      console.error(
+        "Error al obtener la URL:",
+        response.status,
+        response.statusText
+      );
+      return res.status(response.status).send(response.statusText);
+    }
+
+    const contentType = response.headers.get("content-type");
+    const body = await response.text();
+
+    // Modify response headers to remove restrictive policies
     const headers = new Map(response.headers.entries());
     headers.delete("X-Frame-Options");
     headers.delete("Content-Security-Policy");
 
-    const body = await response.text();
-
-    // Modificar el contenido para incluir el script de bloqueo
+    // Inject the script for removing popups
     const modifiedBody = body.replace(
       "</head>",
       `
       <script>
         (function () {
           const fixScrollAndRemovePopups = () => {
-            // Seleccionar los elementos del muro, banners y popups
             const popups = document.querySelectorAll(
               '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content, #pmConsentWall'
             );
-
-            // Eliminar todos los elementos encontrados
-            popups.forEach((popup) => {
-              console.log('Eliminando popup o muro de consentimiento:', popup);
-              popup.remove();
-            });
-
-            // Restaurar el scroll y los estilos bloqueados
+            popups.forEach((popup) => popup.remove());
             const elements = [document.body, document.documentElement];
             elements.forEach((el) => {
               el.style.overflow = 'auto';
@@ -179,8 +187,6 @@ export default async function handler(req, res) {
               el.style.pointerEvents = 'auto';
               el.style.height = 'auto';
             });
-
-            // Detectar otros contenedores que bloquean
             const blockers = document.querySelectorAll(
               '[style*="overflow: hidden"], [style*="position: fixed"], [style*="pointer-events: none"]'
             );
@@ -189,14 +195,10 @@ export default async function handler(req, res) {
               blocker.style.position = 'static';
               blocker.style.pointerEvents = 'auto';
             });
-
             console.log('Scroll desbloqueado y página lista para navegar.');
           };
 
-          // Ejecutar el script al cargar el DOM
           document.addEventListener('DOMContentLoaded', fixScrollAndRemovePopups);
-
-          // Observar cambios en el DOM para detectar popups dinámicos
           const observer = new MutationObserver(() => fixScrollAndRemovePopups());
           observer.observe(document.body, { childList: true, subtree: true });
         })();
@@ -204,7 +206,9 @@ export default async function handler(req, res) {
       </head>`
     );
 
-    res.writeHead(200, Object.fromEntries(headers));
+    res.writeHead(200, {
+      "Content-Type": contentType || "text/html",
+    });
     res.end(modifiedBody);
   } catch (error) {
     console.error("Error al cargar la página:", error);
