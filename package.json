@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Un proxy simple para cargar contenido de otras URLs.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "vercel dev"
   },

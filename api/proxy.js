@@ -68,9 +68,10 @@ export default async (req, res) => {
   try {
     const response = await fetch(targetUrl);
     const body = await response.text();
+
     return res.status(200).send(body);
   } catch (error) {
-    console.error("Error in proxy function:", error);
-    return res.status(500).send("Internal Server Error");
+    console.error("Error in proxy function:", error.message);
+    return res.status(500).send("Internal Server Error: " + error.message);
   }
 };
