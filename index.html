@@ -1,0 +1,157 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firefox Bloqueador Popups</title>
+  </head>
+  <body>
+    <h5>Bloquear Popups Solo Firefox</h5>
+    <div class="responsive-container">
+      <button
+        onclick="loadSite('https://elmundo.es')"
+        style="margin-bottom: 5px"
+      >
+        Elmundo
+      </button>
+      <button
+        onclick="loadSite('https://elpais.com/')"
+        style="margin-bottom: 5px"
+      >
+        Elpais
+      </button>
+      <button
+        onclick="loadSite('https://larazon.es')"
+        style="margin-bottom: 5px"
+      >
+        LaRazón
+      </button>
+      <button
+        onclick="loadSite('https://eleconomista.es')"
+        style="margin-bottom: 5px"
+      >
+        Eleconomista
+      </button>
+      <button
+        onclick="loadSite('https://www.autobild.es/')"
+        style="margin-bottom: 5px"
+      >
+        Autobild
+      </button>
+      <button
+        onclick="loadSite('https://elcaso.elnacional.cat/')"
+        style="margin-bottom: 5px"
+      >
+        ElCaso
+      </button>
+     
+
+    <iframe
+      id="siteViewer"
+      style="width: 100%; height: 90vh; border: none"
+    ></iframe> -->
+<!-- <style>
+  .responsive-container {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos cambien de línea si es necesario */
+  gap: 10px; /* Espaciado entre elementos */
+  width: 50vh; /* Tamaño inicial */
+}
+
+@media (max-width: 768px) {
+  .responsive-container {
+    display: grid; /* Cambia a grid en dispositivos móviles */
+    grid-template-columns: 1fr; /* Cada elemento ocupa toda la fila */
+    width: 90%; /* Asegura que ocupe el ancho completo en móviles */
+  }
+
+  .responsive-container button {
+    margin-top: 0; /* Ajuste del margen en grid */
+  }
+}
+</style>
+    <script>
+      function loadSite(url) {
+        const iframe = document.getElementById("siteViewer");
+        iframe.src = url;
+        console.log(`Cargando sitio: ${url}`);
+
+        // Esperar a que el iframe cargue completamente
+        iframe.onload = () => {
+          try {
+            const iframeDoc =
+              iframe.contentDocument || iframe.contentWindow.document;
+
+            // Crear el script de Tampermonkey dinámicamente
+            const script = iframeDoc.createElement("script");
+            script.textContent = `
+                        (function () {
+                            'use strict';
+                            const fixScrollAndRemovePopups = () => {
+const popups = document.querySelectorAll(
+  '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button'
+);
+                                popups.forEach((popup) => popup.remove());
+                                const elements = [document.body, document.documentElement];
+                                elements.forEach((el) => {
+                                    el.style.overflow = 'auto';
+                                    el.style.position = 'static';
+                                    el.style.pointerEvents = 'auto';
+                                    el.style.height = 'auto';
+                                });
+                                const blockers = document.querySelectorAll('[style*="overflow: hidden"], [style*="position: fixed"], [style*="pointer-events: none"]');
+                                blockers.forEach((blocker) => {
+                                    blocker.style.overflow = 'auto';
+                                    blocker.style.position = 'static';
+                                    blocker.style.pointerEvents = 'auto';
+                                });
+                                console.log('Scroll desbloqueado y página lista para navegar.');
+                            };
+                            document.addEventListener('DOMContentLoaded', fixScrollAndRemovePopups);
+                            const observer = new MutationObserver(() => fixScrollAndRemovePopups());
+                            observer.observe(document.body, { childList: true, subtree: true });
+                            console.log('Script para eliminar popups y habilitar scroll activo.');
+                        })();
+                    `;
+            iframeDoc.head.appendChild(script);
+            console.log("Script inyectado en el iframe.");
+          } catch (error) {
+            console.error(
+              "Error al intentar inyectar el script en el iframe:",
+              error
+            );
+          }
+        };
+      }
+    </script>
+  </body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proxy en Netlify</title>
+  </head>
+  <body>
+    <h1>Proxy en Netlify</h1>
+    <div class="responsive-container">
+      <button onclick="loadSite('https://elmundo.es')">El Mundo</button>
+      <button onclick="loadSite('https://elpais.com')">El País</button>
+    </div>
+    <iframe
+      id="siteViewer"
+      style="width: 100%; height: 90vh; border: none"
+    ></iframe>
+
+    <script>
+      function loadSite(url) {
+        const proxyUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
+        const iframe = document.getElementById("siteViewer");
+        iframe.src = proxyUrl;
+        console.log(`Cargando sitio a través del proxy: ${proxyUrl}`);
+      }
+    </script>
+  </body>
+</html>
