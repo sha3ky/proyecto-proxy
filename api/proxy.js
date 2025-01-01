@@ -79,7 +79,7 @@ export default async function handler(req, res) {
           const fixScrollAndRemovePopups = () => {
             // Seleccionar los elementos del muro, banners y popups
             const popups = document.querySelectorAll(
-              '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content',.#pmConsentWall
+              '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content',#pmConsentWall
             );
 
             // Eliminar todos los elementos encontrados
