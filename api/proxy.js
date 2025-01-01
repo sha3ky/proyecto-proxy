@@ -175,10 +175,18 @@ export default async function handler(req, res) {
       <script>
         (function () {
           const fixScrollAndRemovePopups = () => {
+            // const popups = document.querySelectorAll(
+            //   '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content, #pmConsentWall'
+            // );
+
             const popups = document.querySelectorAll(
-              '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content, #pmConsentWall'
+           '.didomi-popup-container, #didomi-host, .popup, .overlay, .modal, .fc-ab-dialog, .fc-dialog, .fc-dialog-content, .fc-dialog-footer, .fc-button, .pmConsentWall, .pmConsentWall-content, #pmConsentWall, .pmConsentWall-col, .pmConsentWall-main, .pmConsentWall-main-inner'
             );
-            popups.forEach((popup) => popup.remove());
+
+            popups.forEach((popup) => {
+  console.log('Eliminando popup o muro de consentimiento:', popup);
+  popup.parentNode?.removeChild(popup); // Eliminar del DOM
+});
             const elements = [document.body, document.documentElement];
             elements.forEach((el) => {
               el.style.overflow = 'auto';
@@ -186,16 +194,16 @@ export default async function handler(req, res) {
               el.style.pointerEvents = 'auto';
               el.style.height = 'auto';
             });
-            const blockers = document.querySelectorAll(
-              '[style*="overflow: hidden"], [style*="position: fixed"], [style*="pointer-events: none"]'
-            );
-            blockers.forEach((blocker) => {
-              blocker.style.overflow = 'auto';
-              blocker.style.position = 'static';
-              blocker.style.pointerEvents = 'auto';
-            });
-            console.log('Scroll desbloqueado y página lista para navegar.');
-          };
+           const blockers = document.querySelectorAll(
+  '[style*="overflow: hidden"], [style*="position: fixed"], [style*="pointer-events: none"], [class*="pmConsentWall"]'
+);
+blockers.forEach((blocker) => {
+  console.log('Restaurando estilos bloqueados:', blocker);
+  blocker.style.overflow = 'auto';
+  blocker.style.position = 'static';
+  blocker.style.pointerEvents = 'auto';
+  blocker.style.height = 'auto';
+});
 
           document.addEventListener('DOMContentLoaded', fixScrollAndRemovePopups);
           const observer = new MutationObserver(() => fixScrollAndRemovePopups());
